@@ -10,7 +10,7 @@ weather = (("New York City",2013,"July","January",62),("Boston",2013,"July","Jan
 
     
 with con:
-    answer= raw_input("What city do you want to know information about?")
+    answer= (raw_input("What city do you want to know information about?")).title()
     cur=con.cursor()
     cur.execute('drop table if exists weather')
     cur.execute('drop table if exists cities')
