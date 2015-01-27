@@ -16,7 +16,8 @@ for k,v in c.iteritems():
     print "The frequency of number", k, "is", float(v)/count_sum
 
 plt.hist(testlist)
-plt.savefig('histogram')
+plt.savefig("histogram")
+plt.figure()
 plt.boxplot(testlist)
 plt.savefig("boxplot")
 plt.figure()
