@@ -39,3 +39,4 @@ print 'Coefficients: ', f.params[0:2]
 print 'Intercept: ', f.params[2]
 print 'P-Values: ', f.pvalues
 print 'R-Squared: ', f.rsquared
+loansData.to_csv('loansData_clean.csv', header=True, index=False)
