@@ -7,10 +7,14 @@ Created on Sat Feb 28 13:02:42 2015
 
 import sqlite3 as lite
 import requests
+import pandas as pd
 from pandas.io.json import json_normalize
 import time
 from dateutil.parser import parse 
 import collections
+from datetime import timedelta
+import matplotlib.pyplot as plt
+
 
 
 r = requests.get('http://www.citibikenyc.com/stations/json')
@@ -43,6 +47,20 @@ with con:
         cur.execute("UPDATE available_bikes SET _" + str(k) + " = " + str(v) + " WHERE execution_time = " + exec_time.strftime('%s') + ";")
 
 
+cur.execute("DELETE FROM available_bikes")
+for i in range(60):
+    r = requests.get('http://www.citibikenyc.com/stations/json')
+    exec_time = parse(r.json()['executionTime'])
+    cur.execute('INSERT INTO available_bikes (execution_time) VALUES (?)', (exec_time.strftime('%s'),))
+    con.commit()
+    id_bikes_new = collections.defaultdict(int)
+    for station in r.json()['stationBeanList']:
+        id_bikes_new[station['id']] = station['availableBikes'] 
+    for k,v in id_bikes_new.iteritems():
+        cur.execute("UPDATE available_bikes SET _" + str(k) + " = " + str(v) + " WHERE execution_time = " + exec_time.strftime('%s') + ";")
+    time.sleep(60)
 
-
-
+df = pd.read_sql_query("SELECT * FROM available_bikes ORDER BY execution_time",con,index_col='execution_time')
+max_station=abs(df.diff()).sum().idxmax()[1:]
+cur.execute("SELECT id, stationname, latitude, longitude FROM citibike_reference WHERE id = ?", (max_station,)
+data = cur.fetchone()
